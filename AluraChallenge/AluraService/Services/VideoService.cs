@@ -36,10 +36,12 @@ namespace AluraChallenge.AluraService.Services
 
         public void post(Video video)
         { 
-            var v = _context.Videos.Add(video);
             
-            if(v == null) throw new NullReferenceException();
+            if(video == null) throw new NullReferenceException();
 
+            if (video.CategoriaId == 0) video.CategoriaId = 1;
+
+             _context.Videos.Add(video);
             _context.SaveChanges();       
         }
 

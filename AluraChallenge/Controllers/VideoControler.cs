@@ -55,6 +55,14 @@ namespace AluraChallenge.Controllers
 
         }
 
+        [HttpGet("/busca")]
+        public IEnumerable<Video> GetAllWithQuery([FromQuery] int n)
+        {
+            var videos = _context.Videos.Where(v => v.Titulo.Length < n).ToList();
+
+            
+            return videos;
+        }
 
         [HttpDelete("{id}")]
         public IActionResult DeletaVideo(int id)
