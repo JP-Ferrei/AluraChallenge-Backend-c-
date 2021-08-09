@@ -1,12 +1,14 @@
-﻿using AluraChallenge.AluraDomain.Entities;
+﻿using System;
+using AluraChallenge.AluraDomain.Entities;
 using AluraChallenge.AluraRepository.Context;
 using AluraChallenge.AluraService.Interfaces;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using AluraChallenge.AluraService.Interfaces;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
 
 namespace AluraChallenge.Controllers
 {
@@ -41,6 +43,8 @@ namespace AluraChallenge.Controllers
             }
         }
 
+        
+        
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
