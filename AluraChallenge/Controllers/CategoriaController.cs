@@ -1,6 +1,7 @@
 ﻿using AluraChallenge.AluraDomain.Entities;
 using AluraChallenge.AluraRepository.Context;
 using AluraChallenge.AluraService.Interfaces;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,45 +14,110 @@ namespace AluraChallenge.Controllers
     [Route("categorias")]
     public class CategoriaController :ControllerBase
     {
-        private readonly ICategoriaService _categoria;
+        private readonly ICategoriaService _service;
         private AluraContext _context;
 
         public CategoriaController(ICategoriaService categoria, AluraContext context)
         {
-            _categoria = categoria;
+            _service = categoria;
             _context = context;
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            var cateforias = _context.Categorias;
-            
-            return Ok(cateforias);
+            try
+            {
+                var categorias = _service.GetAll();
+                return Ok(categorias);
+
+            }
+              catch( NullReferenceException e )
+            {
+                return NotFound(e.Message);
+            } catch( Exception e )
+            {
+                return StatusCode(500, e.Message);
+            }
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var categoria = _context.Categorias.Find(id);
-            
-            return Ok(categoria);
+            try
+            {
+                var categoria = _service.GetById(id);
+
+                return Ok(categoria);
+
+            }
+            catch(NullReferenceException e )
+            {
+                return NotFound(e.Message);
+            }
+            catch(Exception e )
+            {
+                return StatusCode(500, e.Message);
+            }
+
+        }
+
+        [HttpPatch("{id}")]
+        public IActionResult Patch(int id, [FromBody] JsonPatchDocument<Categoria> model)
+        {
+            try
+            {
+                _service.patch(id, model);
+                return Ok();
+            } catch( NullReferenceException e )
+            {
+                return NotFound(e.Message);
+            } catch( Exception e )
+            {
+                return StatusCode(500, e.Message);
+            }
+
+
         }
 
         [HttpPost]
         public IActionResult Post([FromBody]Categoria model)
+
         {
-            var categorias = _context.Categorias;
-            var modelTitulo = model.Titulo.ToUpper();
+            try
+            {
+                _service.post(model);
+                return Ok(model);
+            }
+            catch(ArgumentException e )
+            {
+                return BadRequest(e.Message);
+            }
+            catch(Exception e )
+            {
+                return StatusCode(500, e.Message);
+            }
 
-            var resultado = categorias.FirstOrDefault(c => c.Titulo.ToUpper() == model.Titulo);
+        }
 
-            if( resultado != null ) return BadRequest();
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            try
+            {
+                _service.Delete(id);
 
-            categorias.Add(model);
-            _context.SaveChanges();
-
-            return Ok(model);
+                return NoContent();
+            }
+            catch(NullReferenceException e )
+            {
+                return NotFound(e.Message);
+            }
+            catch(Exception e )
+            {
+                return StatusCode(500, e.Message);
+            }
         }
     }
+
 }

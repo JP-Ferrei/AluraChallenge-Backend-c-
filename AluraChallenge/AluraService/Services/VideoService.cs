@@ -56,11 +56,25 @@ namespace AluraChallenge.AluraService.Services
         }
 
        
-        public ICollection<Video> getAll()
+        public ICollection<Video> getAll(string search)
         {
-           return _context.Videos.ToList();
+            var videos = search != null ? _context.Videos.Where(x => x.Titulo.Contains(search)).ToList() : _context.Videos.ToList();
+
+            if( videos == null )
+                throw new NullReferenceException();
+
+            return videos;
         }
 
+        public Video GetById(int id)
+        {
+            var video = _context.Videos.FirstOrDefault(video => video.Id == id);
+
+            if( video == null )
+                throw new NullReferenceException();
+
+            return video;
+        }
      
     }
 }

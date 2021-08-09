@@ -15,6 +15,10 @@ namespace AluraChallenge.AluraService.Interfaces
 
         void patch(int id, JsonPatchDocument<Categoria> categoria);
 
-        ICollection<Categoria> getAll();
+        Categoria GetById(int id);
+
+        ICollection<Categoria> GetAll();
+
+
     }
 }

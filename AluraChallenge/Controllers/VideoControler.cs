@@ -11,16 +11,16 @@ namespace AluraChallenge.Controllers
 {
     [ApiController]
     [Route("videos")]
-    public class VideoController : ControllerBase
+    public class VideoController:ControllerBase
     {
-        private AluraContext _context ;
-        private  IVideoService _videoService;
+        private AluraContext _context;
+        private IVideoService _service;
 
         public VideoController(AluraContext context, IVideoService videoService)
         {
             _context = context;
-            _videoService = videoService;
-            
+            _service = videoService;
+
         }
 
         [HttpPost]
@@ -28,30 +28,46 @@ namespace AluraChallenge.Controllers
         {
             try
             {
-                _videoService.post(video);
-                return CreatedAtAction(nameof(RecupeVideoPorId), new {Id = video.Id}, video);
+                _service.post(video);
+                return CreatedAtAction(nameof(RecupeVideoPorId), new { Id = video.Id }, video);
 
-            }catch
+            } catch( Exception e )
             {
 
-                return BadRequest();
+                return BadRequest(e.Message);
             }
         }
 
 
         [HttpGet]
-        public ICollection<Video> RecuperaVideos()
+        public IActionResult RecuperaVideos(string search)
         {
-            return _videoService.getAll();
+            try
+            {
+                var videos = _service.getAll(search);
+                return Ok(videos);
+
+            }catch(Exception e )
+            {
+                return StatusCode(500, e.Message);
+            }
         }
 
 
         [HttpGet("{id}")]
         public IActionResult RecupeVideoPorId(int id)
         {
-            var video = _context.Videos.FirstOrDefault(video => video.Id == id );
-
-            return video != null ? Ok(video) : NotFound(); 
+            try
+            {
+                var video = _service.GetById(id);
+                return Ok(video);
+            } catch( NullReferenceException e )
+            {
+                return NotFound(e.Message);
+            } catch( Exception e )
+            {
+                return StatusCode(500, e.Message);
+            }
 
         }
 
@@ -59,34 +75,53 @@ namespace AluraChallenge.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeletaVideo(int id)
         {
-            try{
-                _videoService.Delete(id);
+            try
+            {
+                _service.Delete(id);
                 return NoContent();
 
-            }catch{
+            } catch( NullReferenceException e )
+            {
 
-                return NotFound();
+                return NotFound(e.Message);
+            } catch( Exception e )
+            {
+                return StatusCode(500, e.Message);
             }
-        }
 
+        }
 
         [HttpPatch("{id}")]
         public IActionResult Patch(int id, [FromBody] JsonPatchDocument<Video> novoVideo)
         {
             try
             {
-                _videoService.patch(id, novoVideo);
+                _service.patch(id, novoVideo);
                 return Ok();
-            } catch( NullReferenceException e ) 
+            } catch( NullReferenceException e )
             {
                 return NotFound(e.Message);
-            }catch(Exception e )
+            } catch( Exception e )
             {
                 return StatusCode(500, e.Message);
             }
 
-            
-        }
 
+        }
+/*
+        [HttpGet("{search}")]
+        public IActionResult VideosPorParametro([FromQuery] string search)
+        {
+            try
+            {
+                
+                return Ok(videos);
+
+            }catch(Exception e )
+            {
+                return StatusCode(500, e.Message);
+            }
+        } 
+*/
     }
 }

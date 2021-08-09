@@ -12,6 +12,8 @@ namespace AluraChallenge.AluraService.Interfaces
 
         void patch(int id, JsonPatchDocument<Video> novoVideo);
 
-        ICollection<Video> getAll();
+        ICollection<Video> getAll(string search);
+
+        Video GetById(int id);
     }
 }
