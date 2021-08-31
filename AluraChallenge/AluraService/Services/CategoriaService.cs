@@ -2,6 +2,7 @@
 using AluraChallenge.AluraRepository.Context;
 using AluraChallenge.AluraService.Interfaces;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,33 +19,34 @@ namespace AluraChallenge.AluraService.Services
             _context = context;
         }
 
-        public Categoria GetById(int id)
+        public async Task<Categoria> GetById(int id)
         {
-            var categoria = _context.Categorias.Find(id);
+            var categoria = await _context.Categorias.FindAsync(id);
 
             if( categoria == null )
                 throw new NullReferenceException();
 
-            
+
             return categoria;
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            var categoria = _context.Categorias.FirstOrDefault(x => x.Id == id);
+            var categorias = await GetAll();
+            var categoria = categorias.FirstOrDefault(x => x.Id == id);
 
             if( categoria == null )
                 throw new NullReferenceException();
 
-            _context.Categorias.Remove(categoria);
+            categorias.Remove(categoria);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
         }
 
-        public ICollection<Categoria> GetAll()
+        public async Task<List<Categoria>> GetAll()
         {
-            var categorias = _context.Categorias.ToList();
+            var categorias = await _context.Categorias.ToListAsync();
 
             if( categorias == null )
                 throw new NullReferenceException();
@@ -53,29 +55,29 @@ namespace AluraChallenge.AluraService.Services
 
         }
 
-        public void patch(int id, JsonPatchDocument<Categoria> model)
+        public async Task Patch(int id, JsonPatchDocument<Categoria> model)
         {
-            var categoria = _context.Categorias.FirstOrDefault(c => c.Id == id);
+            var categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.Id == id);
 
             if( categoria == null ) throw new NullReferenceException();
 
             model.ApplyTo(categoria);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void post(Categoria model)
+        public async Task Post(Categoria model)
         {
-            var categorias = _context.Categorias;
+            var categorias =  await GetAll();
             var modelTitulo = model.Titulo.ToUpper();
 
             var resultado = categorias.FirstOrDefault(c => c.Titulo.ToUpper() == model.Titulo);
 
-            if( resultado != null ) throw new ArgumentException();
+            if( resultado != null ) throw new ArgumentException("Categoria já existe");
 
             categorias.Add(model);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        
+
     }
 }

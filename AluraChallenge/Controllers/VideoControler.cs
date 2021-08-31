@@ -6,9 +6,12 @@ using System.Linq;
 using System.Collections.Generic;
 using AluraChallenge.AluraService.Interfaces;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace AluraChallenge.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("videos")]
     public class VideoController:ControllerBase
@@ -24,11 +27,11 @@ namespace AluraChallenge.Controllers
         }
 
         [HttpPost]
-        public IActionResult AdicionaVideo([FromBody] Video video)
+        public async Task<IActionResult> AdicionaVideo([FromBody] Video video)
         {
             try
             {
-                _service.post(video);
+                await _service.Post(video);
                 return CreatedAtAction(nameof(RecupeVideoPorId), new { Id = video.Id }, video);
 
             } catch( Exception e )
@@ -40,11 +43,11 @@ namespace AluraChallenge.Controllers
 
 
         [HttpGet]
-        public IActionResult RecuperaVideos(string search)
+        public async Task<IActionResult> RecuperaVideos(string search)
         {
             try
             {
-                var videos = _service.getAll(search);
+                var videos = await _service.getAll(search);
                 return Ok(videos);
 
             }catch(Exception e )
@@ -55,11 +58,11 @@ namespace AluraChallenge.Controllers
 
 
         [HttpGet("{id}")]
-        public IActionResult RecupeVideoPorId(int id)
+        public async Task<IActionResult> RecupeVideoPorId(int id)
         {
             try
             {
-                var video = _service.GetById(id);
+                var video = await _service.GetById(id);
                 return Ok(video);
             } catch( NullReferenceException e )
             {
@@ -74,18 +77,18 @@ namespace AluraChallenge.Controllers
         [HttpGet("/busca")]
         public IEnumerable<Video> GetAllWithQuery([FromQuery] int n)
         {
-            var videos = _context.Videos.Where(v => v.Titulo.Length < n).ToList();
+            var videos =  _context.Videos.Where(v => v.Titulo.Length < n).ToList();
 
             
             return videos;
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeletaVideo(int id)
+        public async Task<IActionResult> DeletaVideo(int id)
         {
             try
             {
-                _service.Delete(id);
+                await _service.Delete(id);
                 return NoContent();
 
             } catch( NullReferenceException e )
@@ -100,11 +103,11 @@ namespace AluraChallenge.Controllers
         }
 
         [HttpPatch("{id}")]
-        public IActionResult Patch(int id, [FromBody] JsonPatchDocument<Video> novoVideo)
+        public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<Video> novoVideo)
         {
             try
             {
-                _service.patch(id, novoVideo);
+                await _service.Patch(id, novoVideo);
                 return Ok();
             } catch( NullReferenceException e )
             {

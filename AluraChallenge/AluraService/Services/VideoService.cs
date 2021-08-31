@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AluraChallenge.AluraDomain.Entities;
 using AluraChallenge.AluraRepository.Context;
 using AluraChallenge.AluraService.Interfaces;
@@ -19,48 +20,51 @@ namespace AluraChallenge.AluraService.Services
             _context = context;
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            var video = _context.Videos.FirstOrDefault(video => video.Id == id);
+            var video = await _context.Videos.FirstOrDefaultAsync(video => video.Id == id);
 
             if(video != null)
             {
-                _context.Videos.Remove(video);
-                _context.SaveChanges();
+                var videos = await _context.Videos.ToListAsync();
+                videos.Remove(video);
+                await _context.SaveChangesAsync();
 
-            }else{
-                throw new NullReferenceException();
+            } else{
+                throw new NullReferenceException("Não possuimos um video com esse id");
             }
 
         }
 
-        public void post(Video video)
+        public async Task Post(Video video)
         { 
             
             if(video == null) throw new NullReferenceException();
 
             if (video.CategoriaId == 0) video.CategoriaId = 1;
 
-             _context.Videos.Add(video);
-            _context.SaveChanges();       
+            var videos = await _context.Videos.ToListAsync();
+            videos.Add(video);
+
+            await _context.SaveChangesAsync();
         }
 
-        public void patch(int id, JsonPatchDocument<Video> novoVideo)
+        public async Task Patch(int id, JsonPatchDocument<Video> novoVideo)
         {
-            var video = _context.Videos.FirstOrDefault(v => v.Id == id);
+            var video = await _context.Videos.FirstOrDefaultAsync(v => v.Id == id);
 
             if(video == null) throw new NullReferenceException();
 
             novoVideo.ApplyTo(video);
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             
         }
 
        
-        public ICollection<Video> getAll(string search)
+        public async Task<ICollection<Video>> getAll(string search)
         {
-            var videos = search != null ? _context.Videos.Where(x => x.Titulo.Contains(search)).ToList() : _context.Videos.ToList();
+            var videos =  search != null ? await _context.Videos.Where(x => x.Titulo.Contains(search)).ToListAsync() : await _context.Videos.ToListAsync();
 
             if( videos == null )
                 throw new NullReferenceException();
@@ -68,9 +72,9 @@ namespace AluraChallenge.AluraService.Services
             return videos;
         }
 
-        public Video GetById(int id)
+        public async Task<Video> GetById(int id)
         {
-            var video = _context.Videos.FirstOrDefault(video => video.Id == id);
+            var video = await _context.Videos.FirstOrDefaultAsync(video => video.Id == id);
 
             if( video == null )
                 throw new NullReferenceException();

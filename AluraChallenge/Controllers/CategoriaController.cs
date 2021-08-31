@@ -2,16 +2,13 @@
 using AluraChallenge.AluraDomain.Entities;
 using AluraChallenge.AluraRepository.Context;
 using AluraChallenge.AluraService.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
-using System.Collections.Generic;
-using AluraChallenge.AluraService.Interfaces;
-using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.EntityFrameworkCore;
 
 namespace AluraChallenge.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("categorias")]
     public class CategoriaController :ControllerBase
@@ -71,7 +68,7 @@ namespace AluraChallenge.Controllers
         {
             try
             {
-                _service.patch(id, model);
+                _service.Patch(id, model);
                 return Ok();
             } catch( NullReferenceException e )
             {
@@ -90,7 +87,7 @@ namespace AluraChallenge.Controllers
         {
             try
             {
-                _service.post(model);
+                _service.Post(model);
                 return Ok(model);
             }
             catch(ArgumentException e )

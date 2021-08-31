@@ -8,8 +8,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AluraChallengeApi", "AluraChallengeApi", "{2D9F3FBA-19BF-4C5B-82F3-E896C6F0FCDD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testes", "Testes", "{A29F4D13-7B72-42BF-9058-767BF0F64D49}"
+	ProjectSection(SolutionItems) = preProject
+		C:\Users\JP\Documents\one dark modificado.vstheme = C:\Users\JP\Documents\one dark modificado.vstheme
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AluraChallengeTeste", "AluraChallengeTeste\AluraChallengeTeste.csproj", "{935C7A3B-E0AE-4638-952F-34FF2FDF17EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AluraChallengeTeste", "AluraChallengeTeste\AluraChallengeTeste.csproj", "{935C7A3B-E0AE-4638-952F-34FF2FDF17EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

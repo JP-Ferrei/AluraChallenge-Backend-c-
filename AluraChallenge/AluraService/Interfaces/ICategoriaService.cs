@@ -9,15 +9,15 @@ namespace AluraChallenge.AluraService.Interfaces
 {
     public interface ICategoriaService 
     {
-        void Delete(int id);
+        Task Delete(int id);
 
-        void post(Categoria categoria);
+        Task Post(Categoria categoria);
 
-        void patch(int id, JsonPatchDocument<Categoria> categoria);
+        Task Patch(int id, JsonPatchDocument<Categoria> categoria);
 
-        Categoria GetById(int id);
+        Task<Categoria> GetById(int id);
 
-        ICollection<Categoria> GetAll();
+        Task<List<Categoria>> GetAll();
 
 
     }
